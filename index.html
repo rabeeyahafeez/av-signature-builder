@@ -48,14 +48,14 @@
   input[type=text], input[type=email], input[type=tel], input[type=url] {
     width: 100%; font: inherit; color: var(--fg); background: var(--bg); border: 1px solid var(--line); border-radius: 9px; padding: 10px 12px; }
   input::placeholder { color: var(--muted); opacity: .75; }
-  input:focus-visible, button:focus-visible, .team label:has(input:focus-visible), summary:focus-visible, a:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+  input:focus-visible, button:focus-visible,summary:focus-visible, a:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
   input[aria-invalid="true"] { border-color: var(--accent); }
   .err { color: var(--accent); font-size: 13px; margin: 0; }
 
-  .team { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; background: var(--bg); border: 1px solid var(--line); border-radius: 11px; padding: 4px; }
-  .team label { display: grid; place-items: center; text-align: center; font-weight: 500; font-size: 13px; line-height: 1.25; min-height: 44px; padding: 6px 4px; border-radius: 8px; cursor: pointer; color: var(--muted); }
-  .team input { position: absolute; opacity: 0; pointer-events: none; }
-  .team label:has(input:checked) { background: var(--surface); color: var(--fg); font-weight: 600; box-shadow: 0 1px 2px rgba(0,0,0,.08), 0 0 0 1px var(--line); }
+  .select-wrap { position: relative; }
+  .select-wrap::after { content: ""; position: absolute; right: 15px; top: 50%; width: 7px; height: 7px; border-right: 2px solid var(--muted); border-bottom: 2px solid var(--muted); transform: translateY(-70%) rotate(45deg); pointer-events: none; }
+  select { width: 100%; font: inherit; font-weight: 500; color: var(--fg); background: var(--bg); border: 1px solid var(--line); border-radius: 9px; padding: 10px 40px 10px 12px; min-height: 44px; appearance: none; -webkit-appearance: none; cursor: pointer; }
+  select:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
   .shows { font-size: 13px; color: var(--muted); margin: 0; }
   .shows b { color: var(--fg); font-weight: 600; }
 
@@ -94,7 +94,7 @@
     .bench, .install { grid-template-columns: minmax(0, 1fr); }
     .preview-pane { position: static; }
   }
-  @media (prefers-reduced-motion: no-preference) { button, .team label { transition: background-color .15s, border-color .15s, color .15s; } }
+  @media (prefers-reduced-motion: no-preference) { button, select { transition: background-color .15s, border-color .15s, color .15s; } }
 </style>
 
 </head>
@@ -111,15 +111,17 @@
   <div class="bench">
     <form class="panel" id="details" novalidate>
       <h2>Your details</h2>
-      <fieldset>
-        <legend>Your team</legend>
-        <div class="team" role="radiogroup">
-          <label><input type="radio" name="team" id="team-bd" value="bd" checked>Business Development</label>
-          <label><input type="radio" name="team" id="team-sales" value="sales">Sales</label>
-          <label><input type="radio" name="team" id="team-production" value="production">Production</label>
+      <div class="field">
+        <label for="f-team">Your team</label>
+        <div class="select-wrap">
+          <select id="f-team" name="team">
+            <option value="bd" selected>Business Development</option>
+            <option value="sales">Sales</option>
+            <option value="production">Production</option>
+          </select>
         </div>
         <p class="shows" id="shows"></p>
-      </fieldset>
+      </div>
 
       <div class="field">
         <label for="f-name">Full name</label>
@@ -352,7 +354,7 @@
   const fields = ['name', 'title', 'email', 'phone', 'linkedin'];
   const STORE = 'av-signature-draft';
 
-  function team() { return document.querySelector('input[name=team]:checked').value; }
+  function team() { return $('f-team').value; }
   function values() { const v = {}; fields.forEach(f => v[f] = $('f-' + f).value.trim()); return v; }
 
   function problems(t, v) {
@@ -487,7 +489,7 @@
     const saved = JSON.parse(localStorage.getItem(STORE) || 'null');
     if (saved) {
       fields.forEach(f => { if (saved[f]) $('f-' + f).value = saved[f]; });
-      const r = document.querySelector('input[name=team][value="' + saved.team + '"]'); if (r) r.checked = true;
+      if (['bd', 'sales', 'production'].includes(saved.team)) $('f-team').value = saved.team;
       touched = fields.some(f => saved[f]);
     }
   } catch (e) {}
