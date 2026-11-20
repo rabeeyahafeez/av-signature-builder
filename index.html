@@ -404,7 +404,7 @@
     else {
       const left = Object.values(p);
       gate.hidden = false;
-      gate.textContent = (anyTyped ? 'Almost there. ' : 'The preview shows example details. ') + 'To copy your signature: ' + left.map(s => s.replace(/\.$/, '').toLowerCase()).join('; ') + '.';
+      gate.textContent = (anyTyped ? 'Almost there. ' : 'The preview shows example details. Fill in your own to copy your signature. ') + (anyTyped ? left.join(' ') : '');
     }
     try { localStorage.setItem(STORE, JSON.stringify(Object.assign({ team: t }, v))); } catch (e) {}
   }
