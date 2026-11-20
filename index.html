@@ -167,7 +167,6 @@
         </div>
         <div class="actions">
           <button type="button" class="primary" id="copy-full">Copy signature</button>
-          <button type="button" class="secondary" id="copy-full-html">Copy HTML</button>
         </div>
         <p class="status" id="status-full" role="status"></p>
       </div>
@@ -179,7 +178,6 @@
         <div class="inbox"><div class="mail-body"><p>Sounds good, talk Thursday.</p><div id="out-reply"></div></div></div>
         <div class="actions">
           <button type="button" class="primary" id="copy-reply">Copy reply signature</button>
-          <button type="button" class="secondary" id="copy-reply-html">Copy HTML</button>
         </div>
         <p class="status" id="status-reply" role="status"></p>
       </div>
@@ -210,13 +208,6 @@
           <li>Create <b>AppVerticals reply</b> and paste the reply signature.</li>
           <li>Set the defaults for new messages and for replies/forwards, then <span class="ui">Save</span>.</li>
         </ol>
-        <details>
-          <summary>HubSpot or another tool that asks for HTML</summary>
-          <ol>
-            <li>Click <b>Copy HTML</b> instead of Copy signature.</li>
-            <li>Open the tool's signature editor, switch it to its HTML or source view, and paste.</li>
-          </ol>
-        </details>
       </div>
     </div>
     <p class="foot">When you copy your signature, your details are added to the AppVerticals signature list so the team knows you're set up.</p>
@@ -401,7 +392,7 @@
     });
 
     current = { full: ok ? S.signature(t, v) : '', reply: ok ? S.replySignature(t, v) : '', ok };
-    ['copy-full', 'copy-full-html', 'copy-reply', 'copy-reply-html'].forEach(id => $(id).disabled = !ok);
+    ['copy-full', 'copy-reply'].forEach(id => $(id).disabled = !ok);
     const gate = $('gate');
     if (ok) { gate.hidden = true; }
     else {
@@ -477,8 +468,8 @@
       else setStatus(which, 'Your browser blocked copying. Select the signature in the preview, press Ctrl+C, and paste.', true);
     });
   }
-  wire('copy-full', 'full', 'rich'); wire('copy-full-html', 'full', 'html');
-  wire('copy-reply', 'reply', 'rich'); wire('copy-reply-html', 'reply', 'html');
+  wire('copy-full', 'full', 'rich');
+  wire('copy-reply', 'reply', 'rich');
 
   let touched = false;
   $('details').addEventListener('input', () => render(touched));
